@@ -1,0 +1,59 @@
+--over ndim = 1,alpha = 0.007000,lamba = 0.030000 ,times = 100,trainRmse = 0.812850,testRmse = 1.003510--------
+--over ndim = 1,alpha = 0.007000,lamba = 0.030000 ,times = 200,trainRmse = 0.790711,testRmse = 0.980378--------
+
+--over ndim = 1,alpha = 0.007000,lamba = 0.030000 ,times = 200,trainRmse = 0.788991,testRmse = 0.976907--------
+--over ndim = 2,alpha = 0.007000,lamba = 0.030000 ,times = 200,trainRmse = 0.772721,testRmse = 1.003579--------
+--over ndim = 3,alpha = 0.007000,lamba = 0.030000 ,times = 200,trainRmse = 0.754309,testRmse = 1.014427--------
+--over ndim = 4,alpha = 0.007000,lamba = 0.030000 ,times = 200,trainRmse = 0.736549,testRmse = 1.053964--------
+--over ndim = 5,alpha = 0.007000,lamba = 0.030000 ,times = 200,trainRmse = 0.721739,testRmse = 1.085290--------
+--over ndim = 6,alpha = 0.007000,lamba = 0.030000 ,times = 200,trainRmse = 0.711083,testRmse = 1.070875--------
+--over ndim = 7,alpha = 0.007000,lamba = 0.030000 ,times = 200,trainRmse = 0.698400,testRmse = 1.103535--------
+--over ndim = 8,alpha = 0.007000,lamba = 0.030000 ,times = 200,trainRmse = 0.686959,testRmse = 1.130807--------
+--over ndim = 9,alpha = 0.007000,lamba = 0.030000 ,times = 200,trainRmse = 0.675170,testRmse = 1.167401--------
+--over ndim = 10,alpha = 0.007000,lamba = 0.030000 ,times = 200,trainRmse = 0.664096,testRmse = 1.216330--------
+
+--over ndim = 1,alpha = 0.005000,lamba = 0.020000 ,times = 200,trainRmse = 0.796604,testRmse = 0.984027-------- 0.1±ÈÀý
+--over ndim = 1,alpha = 0.005000,lamba = 0.020000 ,times = 100,trainRmse = 0.827772,testRmse = 0.989646--------
+--over ndim = 1,alpha = 0.005000,lamba = 0.020000 ,times = 200,trainRmse = 0.797526,testRmse = 0.969514--------
+--over ndim = 1,alpha = 0.005000,lamba = 0.020000 ,times = 500,trainRmse = 0.773866,testRmse = 1.009039--------
+
+--over ndim = 1,alpha = 0.005000,lamba = 0.020000 ,times = 150,trainRmse = 0.807170,testRmse = 0.998472--------
+--over ndim = 2,alpha = 0.005000,lamba = 0.020000 ,times = 150,trainRmse = 0.793894,testRmse = 1.025554--------
+--over ndim = 3,alpha = 0.005000,lamba = 0.020000 ,times = 150,trainRmse = 0.785354,testRmse = 1.029591--------
+--over ndim = 4,alpha = 0.005000,lamba = 0.020000 ,times = 150,trainRmse = 0.776591,testRmse = 1.102014--------
+--over ndim = 5,alpha = 0.005000,lamba = 0.020000 ,times = 150,trainRmse = 0.771639,testRmse = 1.109838--------
+--over ndim = 6,alpha = 0.005000,lamba = 0.020000 ,times = 150,trainRmse = 0.764487,testRmse = 1.128880--------
+--over ndim = 7,alpha = 0.005000,lamba = 0.020000 ,times = 150,trainRmse = 0.756605,testRmse = 1.225107--------
+--over ndim = 8,alpha = 0.005000,lamba = 0.020000 ,times = 150,trainRmse = 0.748210,testRmse = 1.227116--------
+--over ndim = 9,alpha = 0.005000,lamba = 0.020000 ,times = 150,trainRmse = 0.745720,testRmse = 1.455131--------
+--over ndim = 10,alpha = 0.005000,lamba = 0.020000 ,times = 150,trainRmse = 0.740580,testRmse = 1.284997--------
+
+--over ndim = 1,alpha = 0.008000,lamba = 0.050000 ,times = 100,trainRmse = 0.804049,testRmse = 0.990758--------
+--over ndim = 1,alpha = 0.008000,lamba = 0.050000 ,times = 200,trainRmse = 0.785998,testRmse = 1.001811--------
+
+--over ndim = 1,alpha = 0.008000,lamba = 0.050000 ,times = 150,trainRmse = 0.791885,testRmse = 0.991948--------
+--over ndim = 2,alpha = 0.008000,lamba = 0.050000 ,times = 150,trainRmse = 0.773490,testRmse = 1.000931--------
+--over ndim = 3,alpha = 0.008000,lamba = 0.050000 ,times = 150,trainRmse = 0.759140,testRmse = 0.997615--------
+--over ndim = 4,alpha = 0.008000,lamba = 0.050000 ,times = 150,trainRmse = 0.743229,testRmse = 1.032874--------
+--over ndim = 5,alpha = 0.008000,lamba = 0.050000 ,times = 150,trainRmse = 0.726262,testRmse = 1.043420--------
+--over ndim = 6,alpha = 0.008000,lamba = 0.050000 ,times = 150,trainRmse = 0.719489,testRmse = 1.055072--------
+--over ndim = 7,alpha = 0.008000,lamba = 0.050000 ,times = 150,trainRmse = 0.708291,testRmse = 1.075853--------
+--over ndim = 8,alpha = 0.008000,lamba = 0.050000 ,times = 150,trainRmse = 0.696032,testRmse = 1.104505--------
+--over ndim = 9,alpha = 0.008000,lamba = 0.050000 ,times = 150,trainRmse = 0.685187,testRmse = 1.119321--------
+--over ndim = 10,alpha = 0.008000,lamba = 0.050000 ,times = 150,trainRmse = 0.677516,testRmse = 1.114773--------
+
+--over ndim = 1,alpha = 0.010000,lamba = 0.100000 ,times = 100,trainRmse = 0.801283,testRmse = 0.994662--------
+--over ndim = 1,alpha = 0.010000,lamba = 0.100000 ,times = 200,trainRmse = 0.785245,testRmse = 0.987368--------
+
+--over ndim = 1,alpha = 0.010000,lamba = 0.100000 ,times = 150,trainRmse = 0.791687,testRmse = 0.989650--------
+--over ndim = 2,alpha = 0.010000,lamba = 0.100000 ,times = 150,trainRmse = 0.771133,testRmse = 0.987216--------
+--over ndim = 3,alpha = 0.010000,lamba = 0.100000 ,times = 150,trainRmse = 0.751377,testRmse = 0.977522--------
+--over ndim = 4,alpha = 0.010000,lamba = 0.100000 ,times = 150,trainRmse = 0.736131,testRmse = 0.988590--------
+--over ndim = 5,alpha = 0.010000,lamba = 0.100000 ,times = 150,trainRmse = 0.723336,testRmse = 0.997824--------
+--over ndim = 6,alpha = 0.010000,lamba = 0.100000 ,times = 150,trainRmse = 0.711360,testRmse = 1.030437--------
+--over ndim = 7,alpha = 0.010000,lamba = 0.100000 ,times = 150,trainRmse = 0.700459,testRmse = 1.019098--------
+--over ndim = 8,alpha = 0.010000,lamba = 0.100000 ,times = 150,trainRmse = 0.693475,testRmse = 1.015357--------
+--over ndim = 9,alpha = 0.010000,lamba = 0.100000 ,times = 150,trainRmse = 0.686940,testRmse = 1.039087--------
+--over ndim = 10,alpha = 0.010000,lamba = 0.100000 ,times = 150,trainRmse = 0.676967,testRmse = 1.029710--------
+
+
