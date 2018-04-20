@@ -1,6 +1,5 @@
 <template>
 	<div class="mindex">
-		<myheader></myheader>
 		<div class="box box1" :style="{backgroundImage:'url('+bg.bg2+')'}">
 			<div class="content">
 				<div class="main">
@@ -10,7 +9,6 @@
 						<span>How To Use?</span>
 						<img src="../assets/down.png" alt="">	
 					</div>
-					
 				</div>
 			</div>
 		</div>
@@ -48,11 +46,11 @@
 	</div>
 </template>
 <script type="text/javascript">
-	import myheader from '@/components/header'
+	
 	import foot from '@/components/foot'
 	export default{
 		components:{
-			myheader,foot
+			foot
 		},
 		data(){
 			return{

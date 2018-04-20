@@ -2,22 +2,22 @@
 	<div class="mv-header" >
 		<div class="content">
 			<div>
-				<h1>LOGO</h1>
-				<router-link tag="span" to="/recommend">Recommendation</router-link>
-				<router-link tag="span" to="/recommend">Popular</router-link>
-				<router-link tag="span" to="/recommend">Top Rated</router-link>	
+				<router-link tag="h1" to="/">LOGO</router-link>
+				<router-link tag="span" to="/recommend/self">Recommendation</router-link>
+				<router-link tag="span" to="/recommend/popular">Popular</router-link>
+				<router-link tag="span" to="/recommend/top">Top Rated</router-link>	
 			</div>
 			<div>
 				<div class="input">
-					<input type="text" class="search" placeholder="Search">
-					<img src="../assets/search.png">
+					<input type="text" class="search" placeholder="Search" @keyup.enter = "search" v-model="searchData">
+					<img src="../assets/search.png" @click="search" >
 				</div>
-				<div class="self">
+				<router-link tag='div' to="/user" class="self">
 					M
-				</div>
+				</router-link>
 				<div class="self2">
-					<span>注册</span>
-					<span>登陆</span>
+					<router-link tag="span" to="/register">Sign In</router-link>
+					<router-link tag="span" to="/login">Login</router-link>
 				</div>
 			</div>
 			
@@ -29,7 +29,18 @@
 import Headroom from 	'headroom.js'
 
 export default {
-	
+	watch:{
+		$route(newv,oldv){
+			if(newv.path != oldv.path)
+				this.searchData = ''
+		}
+	},
+	data(){
+		return{
+			searchData:''	
+		}
+		
+	},
 	mounted(){
 		// grab an element
 		var myElement = document.querySelector("div.mv-header");
@@ -37,6 +48,13 @@ export default {
 		var headroom  = new Headroom(myElement);
 		// initialise
 		headroom.init();
+	},
+	methods:{
+		search(){
+			if(this.searchData == '')
+				return
+			this.$router.push({path:'/recommend/search?val='+this.searchData});
+		}
 	}
 }
 </script>
@@ -61,6 +79,7 @@ export default {
 				display: flex;
 				align-items: center;
 				h1{
+					cursor: pointer;
 					margin:0px;
 				}
 				span{

@@ -1,14 +1,13 @@
 <template>
 	<div class="mrecommend" >
-		<myheader></myheader>
 		<div class="content":style="{backgroundImage:'url('+bg+')'}">
 			<div class="main">
-				<div class="box" v-if="movieData" v-for="item in movieData">
+				<div class="box" v-if="movieData" v-for="item in movieData" @click="getDetail(item.id)">
 					<img :src="basicImgSrc + item.poster_path" alt="">
 					<div class="detail">
 						<h1>{{item.original_title}}</h1>
 						<p><strong>Tagline </strong>: {{item.tagline}}</p>
-						<p><strong>Movie Rating </strong>: {{item.vote_average}}</p>
+						<p><strong>Movie Rating </strong>: {{item.vote_average/2}}</p>
 						<p><strong>Overview </strong>: {{item.overview}}</p>
 						<p class="genres">
 							<strong>Genres </strong>:
@@ -19,17 +18,19 @@
 						</p>
 					</div>
 				</div>
+				<div v-else>
+					<img src="../assets/loading.gif" alt="">
+				</div>
 			</div>
 		</div>
 		<foot></foot>
 	</div>
 </template>
 <script type="text/javascript">
-	import myheader from '@/components/header'
 	import foot from '@/components/foot'
 	export default{
 		components:{
-			myheader,foot
+			foot
 		},
 		data(){
 			return{
@@ -51,8 +52,11 @@
 					console.log(err);
 				})	
 			}
-			
-
+		},
+		methods:{
+			getDetail(id){
+				this.$router.push({path:'/movie/'+id})
+			}
 		}
 	}
 </script>

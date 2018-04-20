@@ -22,6 +22,7 @@
 </script>
 <style type="text/css" scoped lang="less">
 	.mfoot{
+		background-color: #f4f4f4;
 		background-position: center;
 		background-size: cover;
 		width: 100%;
