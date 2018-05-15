@@ -4,9 +4,11 @@
 			<div class="main" :style="{backgroundImage:'url('+backdropSrc+movieData.backdrop_path+')'}">
 				<div class="box">
 					<div class="showbox">
-						<p>{{movieData.vote_average}}</p>
+						<p><rate :name="movieData.id" :value="movieData.vote_average/2"></rate></p><!-- 
+						
+						<p>{{movieData.vote_average}}</p> -->
 						<h1>{{movieData.title}}</h1>
-						<p>{{movieData.tagline}}</p>
+						<point :radius="30" :movieId="movieData.id"></point>
 						<div class="tag">
 							<p><span >Genres:</span><span v-for="item in movieData.genres" class="gen">{{item.name}} </span></p>
 							<p><span >Release date:</span><span>{{movieData.release_date}}</span></p>
@@ -15,6 +17,8 @@
 						<div class="info">
 							<p><span >Overview:</span><span>{{movieData.overview}}</span></p>
 						</div>
+
+						
 					</div>
 				</div>
 			</div>	
@@ -119,26 +123,40 @@
 						</div>
 					</div>
 				</div>
-				<div class="myself">
-					
+				<div class="tmdb" v-if="localReviews != null ">
+					<p>Local reviews</p>
+					<p>(total:{{localReviews.length}})</p>
+					<div class="item" v-for="item in localReviews.slice(0,5)">
+						<div class="name">
+							{{item.username.slice(0,1)}}
+						</div>
+						<div class="content">
+							<p>{{item.content}}</p>
+						</div>
+					</div>
 				</div>
 				<div class="review">
 					<p>review</p>
-					<textarea placeholder="input your review"></textarea>
-					<div class="btn">
+					<textarea placeholder="input your review" v-model="content"></textarea>
+					<div class="btn" @click="saveReview">
 						submit
 					</div>
 				</div>
 			</div>
+		</div>
+		<div v-else class="loading">
+			<img src="../assets/loading.gif" alt="">
 		</div>
 		<foot></foot>
 	</div>
 </template>
 <script type="text/javascript">
 	import foot from '@/components/foot'
+	import rate from '@/components/rate'
+	import point from '@/components/point'
 	export default{
 		components:{
-			foot
+			foot,rate,point
 		},
 		mounted(){
 			if(!isNaN(this.$route.params.id))
@@ -146,10 +164,12 @@
 				this.axios.get('https://api.themoviedb.org/3/movie/'+this.$route.params.id+'?api_key=6e13583a127e758dac0d94b26b7068bf&append_to_response=credits,images,videos,reviews').
 				then((res)=>{
 					this.movieData = (res.data);
+					this.checkMovieId();
 					console.log(res);
 				}).catch((err)=>{
 					console.log(err);
-				})
+				});
+				this.getLoaclReviews();
 			}else{
 				this.$router.push({path:'/'})
 			}
@@ -160,7 +180,95 @@
 				backdropSrc:'https://image.tmdb.org/t/p/original',
 				basicImgSrc:'https://image.tmdb.org/t/p/w185',
 				w300backdropSrc:'https://image.tmdb.org/t/p/w300',
-				poster_sizes:'https://image.tmdb.org/t/p/w185'
+				poster_sizes:'https://image.tmdb.org/t/p/w185',
+				localReviews:null,
+				isSubmit:false,
+				content:''
+			}
+		},
+		methods:{
+			getLoaclReviews(){
+				this.axios.get('/getMovieReviews?movieId='+this.$route.params.id).
+				then((res)=>{
+					if(res.data.status)
+						this.localReviews = res.data.reviews;
+				}).catch((err)=>{
+					console.log(err);
+				});
+			},
+			checkMovieId(){
+				this.axios.get('/checkMovieId?movieId='+this.$route.params.id).
+				then((res)=>{
+					if(res.data.status)
+						this.saveMovieData();
+					else
+						this.userVisit();
+				}).catch((err)=>{
+					console.log(err);
+				});
+			},
+			saveMovieData(){
+				var gen = [],com = [],cast=[],crew = [];
+				for(var i = 0; i<this.movieData.genres.length;i++)
+				{
+					gen.push(this.movieData.genres[i].name);
+				}
+				for(var i = 0; i<this.movieData.production_companies.length;i++)
+				{
+					com.push(this.movieData.production_companies[i].name);
+				}
+				for(var i = 0; i<this.movieData.credits.cast.length;i++)
+				{
+					cast.push(this.movieData.credits.cast[i].name);
+				}
+				for(var i = 0; i<this.movieData.credits.crew.length;i++)
+				{
+					crew.push(this.movieData.credits.crew[i].name);
+				}
+				this.axios.post('/saveMovie',{
+					movieId:this.$route.params.id,
+					title:this.movieData.title,
+					cast:cast.slice(0,10),
+					genres:gen,
+					crew:crew.slice(0,5),
+					production_companies:com,
+					vote_average:this.movieData.vote_average,
+				}).then((res)=>{
+					this.userVisit();
+				}).catch((err)=>{
+					console.log(err);
+				})
+			},
+			saveReview(){
+				if(this.content == '')
+					return alert('no reviews content')
+				if(this.isSubmit)
+					return
+				this.isSubmit = true;
+				this.axios.post('/saveReview',{
+					movieId:this.$route.params.id,
+					content:this.content
+				}).then((res)=>{
+					if(res.data.status)
+					{
+						alert('success!');
+						window.location.reload();
+					}else{
+						alert('fail!');
+						this.isSubmit = false;
+					}
+				}).catch((err)=>{
+					console.log(err);
+					this.isSubmit = false;
+				})	
+			},
+			userVisit(){
+				this.axios.get('/userVisit?movieId='+this.$route.params.id).
+				then((res)=>{
+					console.log(res);
+				}).catch((err)=>{
+					console.log(err);
+				});
 			}
 		}
 	}
@@ -178,7 +286,8 @@
 				background-size: cover;
 				background-repeat: no-repeat;
 				width: 100%;
-				height:800px;
+				height:auto;
+				min-height: 800px;
 				display: flex;
 				justify-content: center;
 				.box{
@@ -191,7 +300,8 @@
 						box-sizing: border-box;
 						padding:32px 35px 50px;
 						width:460px;
-						height:800px;
+						height:auto;
+						min-height: 800px;
 						background-color: rgba(0,0,0,0.7);
 						display: flex;
 						flex-direction: column;
@@ -201,6 +311,7 @@
 							font-size: 50px;
 							margin: 0px;
 							text-align: center;
+							margin-bottom:10px;
 						}
 						>p:nth-child(3){
 							margin-top:5px;
@@ -210,7 +321,7 @@
 						.tag{
 							padding:20px 0px;
 							border-top: 1px solid rgba(128,91,231,0.3);
-							margin-top:30px;
+							margin-top:10px;
 							color:rgba(255,255,255,0.9);
 							width:100%;
 							>p:first-child{
@@ -496,6 +607,11 @@
 				}
 			}
 		}
+		.loading{
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
 		@keyframes line{
 			from{
 				width:0px;
@@ -504,5 +620,187 @@
 				width:100%;
 			}
 		}
+	}
+
+	@media screen and (max-width: 1024px) {
+		.mmovie{
+			padding-top: 40px;
+			.content{
+				.main{
+					height:auto;
+					.box{
+						width:100%;
+						padding:0 10px;
+						box-sizing: border-box;
+						.showbox{
+							padding:20px;
+							width:auto;
+							height:auto;
+							h1{
+								font-size: 28px;
+								margin-bottom:20px;
+							}
+							.tag{
+								padding:20px 0px;
+								font-size: 14px;
+							}
+							.info{
+								p{
+									span:last-child{
+										font-size: 14px;
+										line-height:24px;
+									}
+								}
+							}
+						}
+					}
+				}
+				.link{
+					width: 100%;
+					height:60px;
+					display: flex;
+					justify-content: center;
+					background-color: white;
+					border-bottom: 1px solid #d7d7d7;
+					.item{
+						width: 100%;
+						padding:0 10px;
+						box-sizing: border-box;
+						.box{
+							font-size: 12px;
+						}
+					}
+				}
+				.movieMessage{
+					width: 100%;
+					box-sizing: border-box;
+					padding:10px 10px 0px;
+					h1{
+						font-size: 20px;
+						line-height:20px;
+					}
+					>h1::before{
+						height:18px;
+					}
+					.box1{
+						box-sizing: border-box;
+						padding:10px;
+						.line{
+							flex-wrap: wrap;
+							.item{
+								flex:0 0 50%;
+								font-size: 14px;
+							}
+						}
+					}
+					.box2{
+						box-sizing: border-box;
+						padding:10px;
+						width:100%;
+						overflow-x: auto;
+					}
+				}
+				.movieVideo{
+					width: 100%;
+					padding:10px;
+					box-sizing: border-box;
+					>h1{
+						font-size: 20px;
+						line-height: 20px;
+					}
+					>h1::before{
+						height:18px;
+					}
+					.box1{
+						max-width: 100%;
+						overflow-x: scroll;
+					}
+					.box2{
+						max-width: 100%;
+						overflow-x: scroll;
+					}
+				}
+				.movieReview{
+					width: 100%;
+					padding:10px;
+					box-sizing: border-box;
+					h1{
+						font-size: 20px;
+						line-height: 20px;
+					}
+					>h1::before{
+						height:18px;
+					}
+					.tmdb,.myself{
+						>p:first-child{
+							font-weight: bold;
+							font-size: 16px;
+							margin-bottom: 2px;
+						}
+						.item{
+							margin-top: 20px;
+							box-sizing: border-box;
+							padding:10px;
+							display: flex;
+							align-items: center;
+							.name{
+								margin-right: 15px;
+							}
+							.content{
+								word-break: break-all;
+								font-size: 14px;
+							}
+						}
+					}
+					.review{
+						display: flex;
+						flex-direction: column;
+						>p:first-child{
+							font-weight: bold;
+						}
+						textarea{
+							align-self: center;
+							resize: none;
+							font-size: 20px;
+							width:95%;
+							height:80px;
+							border:1px solid #d7d7d7;
+							padding:10px;
+							box-sizing: border-box;
+							&:focus{
+								outline: 0;
+							}
+						}
+						>div{
+							align-self: flex-end;
+							width:80px;
+							height:30px;
+							background-color: #805be7;
+							color:white;
+							line-height: 30px;
+							border-radius: 5px;
+							text-align: center;
+							cursor: pointer;
+							margin-top: 20px;
+							position: relative;
+							right:50px;
+						}
+					}
+				}
+			}
+			.loading{
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			@keyframes line{
+				from{
+					width:0px;
+				}
+				to{
+					width:100%;
+				}
+			}
+	}
 	}
 </style>

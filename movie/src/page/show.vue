@@ -1,18 +1,23 @@
 <template>
 	<div class="mshow" >
 		 <div class="content">
-		 	<div class="main">
+		 	<div class="main" v-if="showData &&  showData.length && showData.length>0">
 		 		<div class="box" v-for="item in showData">
 		 			<img  v-if="item.poster_path" :src="basicImgSrc + item.poster_path">
 		 			<div v-else  class="nopic"><img src="../assets/pic.png"></div>
 		 			<div class="info">
-		 				<p><strong>{{item.title}}</strong></p>
-		 				<p>
-		 					<span v-if="item.vote_count!=0">{{item.vote_average}}</span>
-		 					<span v-else>no ratings</span>
-		 					<span v-if="item.release_date">{{item.release_date}}</span>
-		 					<span v-else>no release date</span>
-		 				</p>
+		 				<div class="title">
+		 					<rate :name="item.id" :value="item.vote_average/2" :radius="40" :offset="2" :fontSize="8"></rate>
+		 					<div class="word">
+		 						<p><strong>{{item.title}}</strong></p>
+		 						<p>
+				 					<span v-if="item.release_date">{{item.release_date}}</span>
+				 					<span v-else>no release date</span>
+				 				</p>
+		 					</div>
+		 				</div>
+		 				
+		 				
 		 				<p></p>
 		 				<p v-if="item.overview">{{overviewChange(item.overview)}}</p>
 		 				<p v-else>No overview Data</p>
@@ -22,6 +27,9 @@
 		 			</div>
 		 		</div>
 		 	</div>
+		 	<div v-else class="loading">
+				<img src="../assets/loading.gif" alt="">
+			</div>
 		 	<div class="page">
 		 		<div class="mes">
 		 			<p>current page:{{page}} of {{total_page}}</p>
@@ -38,9 +46,10 @@
 </template>
 <script type="text/javascript">
 import foot from '@/components/foot'
+import rate from '@/components/rate'
 	export default{
 		components:{
-			foot
+			foot,rate
 		},
 		watch:{
 			$route(){
@@ -139,7 +148,11 @@ import foot from '@/components/foot'
 			display: flex;
 			flex-direction: column;
 			align-items: center;
-
+			.loading{
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
 			.main{
 				width:1000px;
 				padding:0 20px;
@@ -159,6 +172,17 @@ import foot from '@/components/foot'
 						box-sizing: border-box;
 						padding:10px 16px 16px 16px;
 						position: relative;
+						.title{
+							display: flex;
+							align-items: center;
+							margin-bottom: 20px;
+							.word{
+								margin-left:  10px;
+								p{
+									margin:0;
+								}
+							}
+						}
 						p{
 							margin:0;
 						}
@@ -219,6 +243,39 @@ import foot from '@/components/foot'
 						margin-left: 5px;
 
 					}
+				}
+			}
+		}
+	}
+	@media screen and (max-width: 1024px) {
+		.mshow{
+			padding-top: 40px;
+			.content{
+				width: 100%;
+				.main{
+					width:100%;
+					padding:0 10px;
+					box-sizing: border-box;
+					display: flex;
+					flex-direction: column;
+					justify-content:flex-start;
+					.box{
+						.info{
+							flex: 1 1 auto;
+							box-sizing: border-box;
+							overflow:hidden;
+							p:nth-child(3){
+								font-size: 12px;
+							}
+							.more{
+								background-color:#f4f4f4;
+							}
+						}
+					}
+				}
+				.page{
+					width:100%;
+					box-sizing: border-box;
 				}
 			}
 		}

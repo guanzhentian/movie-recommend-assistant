@@ -3,22 +3,23 @@ import numpy
 import time
 from pandas import DataFrame
 import os 
+from pymongo import MongoClient
 
 class svd(object):
 	"""docstring for svd 0.005 0.02"""
 	def __init__(self, ndim ,alpha ,lamba ,times ):
-		self.basicDataDir = 'ml-latest-small'
+		self.basicDataDir = '../svd/ml-latest-small'
 		dataname = self.basicDataDir+'/ratings.csv'
-		y = self.handleCsvData(dataname,True)  
+		  
 		
 		self.ndim = ndim 		
-		self.test_proportion = 0.2
-		self.user_rate_data = y
+		self.test_proportion = 0.001
+		self.user_rate_data = None
 
-		self.martix = numpy.array(y,dtype = numpy.float64) 
-		maxdata = self.martix.max(axis = 0)
-		self.user = int(maxdata[0]) 	
-
+		# self.martix = numpy.array(y,dtype = numpy.float64) 
+		# maxdata = self.martix.max(axis = 0)
+		# self.user = int(maxdata[0]) 	
+		self.user = None
 		self.avgRate = None
 		self.movieData = None
 		self.movie = None
@@ -35,13 +36,40 @@ class svd(object):
 		self.testRmse = None
 		self.compareData = None
 		self.id_to_movie = None
+		self.user_to_id = None
 
+		self.handleCsvData(dataname,True)
+		self.handleUserData()
 		self.handleMovieData()
 		self.initData()
 		self.train()
 		self.test()
 
-		
+	def handleUserData(self):
+		num = 0
+		obj = {}
+		userlist = []
+		for row in self.user_rate_data:
+			if obj.has_key(str(row[0])):
+				continue
+			else:
+				obj[str(row[0])] = num
+				newData ={
+					'id':num,
+					'userId':row[0]
+				}
+				num +=1
+				userlist.append(newData)
+		self.user = num
+		self.user_to_id = obj
+		client = MongoClient('mongodb://localhost:27017/')
+		db = client.movie_recommend
+		userlinks = db.userlinks
+		userlinks.delete_many({})
+		userlinks.insert_many(userlist)
+		print '\n-----------User data init finished  -------------\n'
+		print '----------',self.user,'---------------------'
+
 
 	def handleCsvData(self,name,skip=False):
 		starttime = time.time()
@@ -54,7 +82,7 @@ class svd(object):
 			allRow.append(row)
 		endtime = time.time()
 		print '\n-----------csv data load finished ,cost time %f -------------\n'% (endtime - starttime)
-		return allRow	
+		self.user_rate_data =  allRow	
 
 	def  handleMovieData(self):
 		starttime = time.time()
@@ -62,7 +90,7 @@ class svd(object):
 		reader = csv.reader(file(link))
 		reader.next()
 		md = {}
-		itm = {}
+		# itm = []
 		num = 0
 		for row in reader:
 			newData = {
@@ -70,16 +98,12 @@ class svd(object):
 				'genres':row[2],
 				'id':num
 			}
-			newData2 = {
-				'title':row[1],
-				'genres':row[2],
-				'movieId':row[0]
-			}
+			# newData2 = [num,row[0]]
 			md[row[0]] = newData
-			itm[num] = newData2
+			# itm.append(newData2)
 			num+=1
 
-		self.id_to_movie = itm
+		# self.id_to_movie = numpy.array(itm)
 		self.movie =len(md)
 		self.movieData =  md
 		endtime = time.time()
@@ -89,7 +113,7 @@ class svd(object):
 		starttime = time.time()
 
 		#get train data & test data
-		numPop = int(0.2*len(self.user_rate_data))
+		numPop = int(self.test_proportion *len(self.user_rate_data))
 		testData = []
 		for i in range(0,numPop):
 			ran = numpy.random.randint(0,len(self.user_rate_data))
@@ -110,8 +134,8 @@ class svd(object):
 		for i in range(0,self.user):
 			row = []
 			for j in range(0,self.ndim):
-				# rd = numpy.random.uniform(0,0.5)
-				rd = 0
+				rd = numpy.random.uniform(0,1)
+				# rd = 0
 				row.append(rd)
 			userArray.append(row)
 
@@ -122,8 +146,8 @@ class svd(object):
 		for i in range(0,self.ndim):
 			row = []
 			for j in range(0,self.movie):
-				# rd = numpy.random.uniform(0,0.5)
-				rd = 0
+				rd = numpy.random.uniform(0,1)
+				# rd = 0
 				row.append(rd)
 			itemArray.append(row)
 
@@ -151,20 +175,26 @@ class svd(object):
 			rmse = 0
 			rmseNum = 0
 			for item in self.trainData:
-				user = int(item[0]) - 1 
-				movie = item[1]
+				user = self.user_to_id[str(item[0])]
+				movie = str(item[1])
 				rui = float(item[2])
-				rui2 = self.avgRate + self.bu[user] + self.bi[self.movieData[movie]['id']] + numpy.matmul(self.p[user],self.q[:,self.movieData[movie]['id']])				
+				try:
+					rui2 = self.avgRate + self.bu[user] + self.bi[self.movieData[movie]['id']] + numpy.matmul(self.p[user],self.q[:,self.movieData[movie]['id']])				
+				except:
+					print '----------error user ',user
+					print '----------error movie ',movie
+					print '----------error type(movie) ',type(movie)
+					print '----------error self.movieData[movie] ',self.movieData[movie]
 				# if rui2 > 5:
 				# 	rui2  = 5
 				# elif rui2 < 0:
 				# 	rui2 = 0
 				e = float(rui) - float(rui2)
-
 				#train
 				self.bu[user] += self.alpha*(e - self.lamba * self.bu[user])
 				self.bi[self.movieData[movie]['id']] += self.alpha*(e - self.lamba * self.bi[self.movieData[movie]['id']])
 				for i in range(0,self.ndim):
+					# print self.alpha*(e*self.q[i,self.movieData[movie]['id']] - self.lamba * self.p[user,i])
 					self.p[user,i] += self.alpha*(e*self.q[i,self.movieData[movie]['id']] - self.lamba * self.p[user,i])
 					self.q[i,self.movieData[movie]['id']] += self.alpha*(e*self.p[user,i] - self.lamba * self.q[i,self.movieData[movie]['id']])
 				rmse += e * e
@@ -173,10 +203,10 @@ class svd(object):
 			# print (rmse,rmseNum)
 			rmse = ((rmse/rmseNum)**0.5)
 
-			try:
-				print  '----------------%d Train RMSE = %f -------------------------'% (k,float(rmse))
-			except:
-				print("Unexpected error")
+			# try:
+			# 	print  '----------------%d Train RMSE = %f -------------------------'% (k,float(rmse))
+			# except:
+			# 	print("Unexpected error")
 
 			if rmse > lastRmse:
 				print '----------------%d Train RMSE up-------------------------' % k
@@ -184,16 +214,17 @@ class svd(object):
 			else:
 				lastRmse = rmse
 		self.trainRmse = rmse	
-		endtime = time.time()
-		print '-----------initData finished,cost time %f   -----------------\n'% (endtime - starttime)
+		# endtime = time.time()
+		# print '-----------initData finished,cost time %f   -----------------\n'% (endtime - starttime)
 
 	def test(self):
 		starttime = time.time()
 		rmse = 0
 		rmseNum = 0
 		ruilist = []
+
 		for item in self.testData:
-			user = int(item[0]) - 1 
+			user = self.user_to_id[str(item[0])]
 			movie = item[1]
 			rui = float(item[2])
 			rui2 = self.avgRate + self.bu[user] + self.bi[self.movieData[movie]['id']]+numpy.matmul(self.p[user],self.q[:,self.movieData[movie]['id']])
@@ -214,28 +245,41 @@ class svd(object):
 
 	def saveData(self):
 		localtime = time.localtime(time.time())
-		name = str(localtime.tm_mon)+'-'+str(localtime.tm_mday)+' '+str(localtime.tm_hour)+'-'+str(localtime.tm_min)+'-'+str(localtime.tm_sec)
-		os.mkdir('save/'+name)
 		#save compare
 		c = DataFrame(self.compareData)
-		c.to_csv('save/'+name+'/compare.csv',index=False,header =False)
+		c.to_csv('../svd/save/compare.csv',index=False,header =False)
 		print '--------------File compare saved -----------------'
 		#save p 
 		c = DataFrame(self.p)
-		c.to_csv('save/'+name+'/p.csv',index=False,header =False)
+		c.to_csv('../svd/save/p.csv',index=False,header =False)
 		print '--------------File p saved -----------------'
 		#save q 
 		c = DataFrame(self.q)
-		c.to_csv('save/'+name+'/q.csv',index=False,header =False)
+		c.to_csv('../svd/save/q.csv',index=False,header =False)
 		print '--------------File q saved -----------------'
+		#save bu 
+		c = DataFrame(self.bu)
+		c.to_csv('../svd/save/bu.csv',index=False,header =False)
+		print '--------------File bu saved -----------------'
+		#save bi 
+		c = DataFrame(self.bi)
+		c.to_csv('../svd/save/bi.csv',index=False,header =False)
+		print '--------------File bi saved -----------------'
+		#save id_to_movie 
+		# c = DataFrame(self.id_to_movie)
+		# c.to_csv('save/id-to-movie.csv',index=False,header =False)
+		# print '--------------File id_to_movie saved -----------------'
+		#save avgRate 
+		file  = open('../svd/save/avg.txt','w+')
+		file.write(str(self.avgRate))
+		file.close()
+		print '--------------File avgRate saved -----------------'
 		#save r
-		header = []
-		for item in self.id_to_movie:
-			header.append( self.id_to_movie[item]['title'])
-		r = numpy.matmul(self.p,self.q)
-		c = DataFrame(r)
-		c.to_csv('save/'+name+'/r.csv',index=False,header =header)
-		print '--------------File r saved -----------------'
-
-		return 'save/'+name
+		# header = []
+		# for item in self.id_to_movie:
+		# 	header.append( self.id_to_movie[item]['title'])
+		# r = numpy.matmul(self.p,self.q)
+		# c = DataFrame(r)
+		# c.to_csv('save/r.csv',index=False,header =header)
+		# print '--------------File r saved -----------------'
 

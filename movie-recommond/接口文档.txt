@@ -1,0 +1,170 @@
+1.signin /注册 post
+
+from：
+	username: (查重，英文字母，大于等于三位)
+	password：（大于等于八位）
+return：
+	bool：是否成功
+
+2.用户名查重 /checkUsername?name = '' get
+from:username
+return:bool
+
+3.登陆/login post
+
+form:
+	username:
+	password:
+return:
+	bool:
+
+（hearder.vue)
+4.检查是否登陆 get
+/checkLogin
+
+form:
+return:bool
+
+
+6.获取电影评论（本地） get
+/getMovieReviews
+
+from：movieId
+return：object
+
+7.输入电影信息到本地
+/saveMovie post
+
+from:object
+return:bool
+
+8.检查是否有此电影信息 get
+/checkMovieId
+
+from:movieId
+return:bool
+
+9.保存电影评论
+/saveReview  post
+from：
+	movieId
+	content
+return:bool
+
+10.获取用户个人信息 get
+/userData
+
+from:
+
+return:object
+
+11.用户评分
+/userRate post
+from:
+	movieid
+	rate
+return:
+	bool
+
+12.用户浏览电影信息输入
+/userVisit get
+form:
+	movieId
+return:
+	bool
+
+13.发起推荐数据生成
+
+14.获取相似电影
+
+5.获取推荐电影
+
+form: username
+return:array
+
+15.检查是否管理员用户 16.查看日记记录 18.获取本日统计数据 /getLogs
+
+17.获取用户
+
+
+
+
+在某些操作前加入session检查
+404
+
+数据库：nosql
+
+用户模型：{
+	username(key):{
+		id:Number,
+		sign_in_time:string,
+		password:string,
+		watch:[](movieId),
+		rates:[{
+			movieid:string,
+			rate:Number,
+			type:bool
+		}],
+		reviews:[{
+			movieid:string,
+			content:string,
+			time:string
+		}],
+		logMes:[{
+			logtime:string,
+			ip:string
+		}]
+	}
+}
+
+电影模型:{
+	movieId(key):{
+		cast:[name(string)],
+		genres:[string],
+		production_companies:[string],
+		vote_average:number,
+		rate:[{
+			username:string,
+			time:string,
+			rate:Number
+		}],
+		reviews:[{
+			username:string,
+			time:string,
+			content:string
+		}]
+	}
+}
+
+每日数据模型：{
+	date:String,
+	visit_num:Number,
+	register:Number,
+	watch_movie:{
+		id:Number
+	},
+	review_movie:[{
+		id:Number,
+		content:String,
+		times:Number
+	}],
+	logs:[{
+		time:String,
+		log:String,
+		userId:Number,
+		user:String,
+		ip:String
+	}]
+}
+
+操作命令
+
+128.199.162.196 
+/root/data/movie/movie-recommond/public 
+/root/data/movie/movie-recommond/views
+
+pscp C:\Users\ASUS\Desktop\index.html root@128.199.162.196:/root/data/movie/movie-recommond/views
+pscp -r C:\Users\ASUS\Desktop\static root@128.199.162.196:/root/data/movie/movie-recommond/public
+pscp -r C:\Users\ASUS\Desktop\svd.py root@128.199.162.196:/root/data/movie/svd
+
+forever start -l forever.log -e err.log -o out.log -a bin/www

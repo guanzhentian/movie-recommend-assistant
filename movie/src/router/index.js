@@ -6,6 +6,8 @@ import register from '@/page/register'
 import show from '@/page/show'
 import movie from '@/page/movie'
 import user from '@/page/user'
+import test from '@/page/test'
+import management from '@/page/management'
 
 Vue.use(Router)
 
@@ -47,6 +49,14 @@ export default new Router({
     {
       path:'/user',
       component:user
+    },
+    {
+      path:'/test',
+      component:test
+    },
+    {
+      path:'/mana',
+      component:management
     },
     {
       path:'*',

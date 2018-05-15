@@ -16,9 +16,9 @@
 			<div class="content">
 				<h1><div class="one">1</div>First Step</h1>
 				<p>You need to register and sign in</p>
-				<div class="zcbtn">
+				<router-link class="zcbtn" tag="div" to="/register">
 					REGISTER NOW!
-				</div>
+				</router-link>
 				<p>Or you can click on Register in the upper right corner</p>
 				<h1><div class="one">2</div>Second Step</h1>
 				<p>You need to complete our recommended test</p>
@@ -37,20 +37,18 @@
 						<p>The recommendation method based on the SVD algorithm is based on the rating history of all users and comprehensively calculates the movie you will like.</p>
 						<p>In these recommended methods, some features unique to this site are added for weighted calculations.</p>	
 					</div>
-					
 				</div>
-				
 			</div>
 		</div>
 		<foot></foot>
 	</div>
 </template>
 <script type="text/javascript">
-	
+	import point from '@/components/point'
 	import foot from '@/components/foot'
 	export default{
 		components:{
-			foot
+			foot,point
 		},
 		data(){
 			return{
@@ -58,7 +56,7 @@
 
 					bg2:require('../assets/5.jpg'),
 					bg4:require('../assets/4.jpg'),
-				}
+				},
 			}
 		}
 	}	
@@ -90,15 +88,14 @@
 				justify-content: center;
 				h1{
 					position: relative;
-					top:-80px;
+					top:-40px;
 					margin:0;
 					font-size:50px;
 					text-align: center;
 				}
 				.bot{
-					width: 100%;
-					position: absolute;
-					bottom:30px;
+					position: relative;
+					bottom: -270px;
 					display: flex;
 					flex-direction: column;
 					justify-content: center;
@@ -183,8 +180,7 @@
 				display: flex;
 				flex-direction: column;
 				h1{
-					position: relative;
-					left:100px;
+					padding-left: 100px;
 				}
 				.content2{
 					align-self: center;
@@ -200,6 +196,89 @@
 				
 			}
 			
+		}
+	}
+	@media screen and (max-width: 1024px){
+		.mindex{
+			padding-top: 40px;
+		}
+		.box1{
+			height:400px;
+			.content{
+				.main{
+					width:100%;
+					padding:0px;
+					h1{
+						font-size:30px;
+					}
+					.bot{
+						bottom:-90px;
+						span{
+							font-size:16px;
+						}
+						img{
+							width:20px;
+							margin-top: 10px;
+						}
+					}
+				}
+			}
+		}
+		.box2{
+			height:650px;
+			.content{
+				width:100%;
+				padding:0 10px;
+				box-sizing: border-box;
+				h1{
+					font-size: 20px;
+					.one{
+						margin-right:10px;
+						font-size:14px;
+						width:20px;
+						height:20px;
+						line-height: 20px;
+					}
+				}
+				p{
+					font-size: 16px;
+				}
+				.zcbtn{
+					width:150px;
+					height:60px;
+					line-height: 60px;
+					font-size: 14px;
+				}
+				>img{
+					width:300px;
+				}
+			}
+		}
+		.box3{
+			height:700px;
+			.content{
+				.main{
+					width:100%;
+					padding:0 10px;
+					box-sizing: border-box;
+					h1{
+						padding-left: 0px;
+						font-size: 20px;
+					}
+					.content2{
+						align-self: center;
+						width:100%;
+						top:0px;
+						p{
+							color:rgba(255,255,255,0.9);
+							text-indent: 2em;
+							font-size: 16px;
+						}	
+					}
+					
+				}
+				
+			}
 		}
 	}
 </style>
